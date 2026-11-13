@@ -47,7 +47,8 @@ enum class TipoEvento {
     CAMBIO_MODO,
     SISTEMA_OT,
     LOGIN_SEGURIDAD,
-    CONTROL_RBAC
+    CONTROL_RBAC,
+    BITACORA
 }
 
 data class UsuarioSesion(
