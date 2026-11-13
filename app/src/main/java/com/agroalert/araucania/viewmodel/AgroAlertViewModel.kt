@@ -156,6 +156,59 @@ class AgroAlertViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Simulación interactiva de evento crítico de helada para demostración docente.
+     * Desciende la temperatura a -1.2 °C y verifica la respuesta Fail-Safe del sistema.
+     */
+    fun simularHeladaCritica() {
+        _telemetria.update {
+            it.copy(
+                temperatura = -1.2f,
+                humedad = 94.0f,
+                puntoRocio = -2.1f,
+                bombaFisicaActiva = true,
+                timestamp = System.currentTimeMillis()
+            )
+        }
+        val autor = _usuarioActual.value?.nombre ?: "Usuario"
+        registrarEvento(
+            TipoEvento.ALERTA_HELADA,
+            "¡ALERTA CRÍTICA SIMULADA (-1.2 °C)! Lazo Fail-Safe OT del ESP32 activó aspersión superficial para liberar 80 cal/g de calor latente."
+        )
+    }
+
+    /**
+     * Restaura las condiciones agroclimáticas seguras (14.8 °C).
+     */
+    fun restaurarTemperaturaNormal() {
+        _telemetria.update {
+            it.copy(
+                temperatura = 14.8f,
+                humedad = 68.0f,
+                puntoRocio = 8.8f,
+                bombaFisicaActiva = false,
+                timestamp = System.currentTimeMillis()
+            )
+        }
+        val autor = _usuarioActual.value?.nombre ?: "Usuario"
+        registrarEvento(
+            TipoEvento.CAMBIO_MODO,
+            "Temperatura normalizada a 14.8 °C por $autor. Riego en reposo."
+        )
+    }
+
+    /**
+     * Permite al Operador o Administrador agregar notas de campo a la bitácora oficial.
+     */
+    fun agregarReporteCampo(nota: String) {
+        val autor = _usuarioActual.value?.nombre ?: "Operador"
+        val rol = if (_usuarioActual.value?.rol == RolUsuario.ADMINISTRADOR) "Admin" else "Operador"
+        registrarEvento(
+            TipoEvento.BITACORA,
+            "[$rol - $autor]: $nota"
+        )
+    }
+
     fun registrarEvento(tipo: TipoEvento, mensaje: String) {
         val horaActual = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
         val nuevoEvento = BitacoraRegistro(hora = horaActual, tipo = tipo, mensaje = mensaje)

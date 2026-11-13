@@ -56,38 +56,45 @@ fun MonitoreoTab(viewModel: AgroAlertViewModel) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        // 1. Píldora de Conectividad ESP32 Wi-Fi + Firebase
+        // 1. Píldora de Conectividad ESP32 Wi-Fi + Firebase (Diseño limpio y no deformable)
         item {
             Card(
-                shape = RoundedCornerShape(10.dp),
+                shape = RoundedCornerShape(12.dp),
                 colors = CardDefaults.cardColors(containerColor = InacapBlueLight),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
-                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 14.dp, vertical = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(10.dp)
-                                .clip(CircleShape)
-                                .background(AgroGreenSecondary)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
+                    Box(
+                        modifier = Modifier
+                            .size(10.dp)
+                            .clip(CircleShape)
+                            .background(AgroGreenSecondary)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "ESP32 Wi-Fi Huerto Freire",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = InacapBlue,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = InacapBlue.copy(alpha = 0.15f)
+                    ) {
                         Text(
-                            text = "ESP32 Wi-Fi Conectado (${telemetria.nodoId})",
-                            fontSize = 12.sp,
+                            text = "${telemetria.latenciaMs} ms",
+                            fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
-                            color = InacapBlue
+                            color = InacapBlue,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                         )
                     }
-                    Text(
-                        text = "${telemetria.latenciaMs} ms (WSS)",
-                        fontSize = 11.sp,
-                        color = InacapBlue
-                    )
                 }
             }
         }
@@ -107,20 +114,20 @@ fun MonitoreoTab(viewModel: AgroAlertViewModel) {
                         imageVector = if (esHeladaCritica) Icons.Default.Warning else Icons.Default.Thermostat,
                         contentDescription = null,
                         tint = bannerColor,
-                        modifier = Modifier.size(38.dp)
+                        modifier = Modifier.size(36.dp)
                     )
                     Spacer(modifier = Modifier.width(12.dp))
-                    Column {
+                    Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = bannerTexto,
                             fontWeight = FontWeight.Bold,
                             color = bannerColor,
-                            fontSize = 14.sp
+                            fontSize = 13.sp
                         )
                         Text(
                             text = if (esHeladaCritica) 
                                 "Liberando 80 cal/g de calor latente para proteger las yemas."
-                                else "Monitoreo One-Wire en D4 con pull-up de 10k.",
+                                else "Sensor One-Wire DHT11 en GPIO 4 con pull-up físico.",
                             style = MaterialTheme.typography.bodySmall,
                             color = TextPrimary
                         )
@@ -147,7 +154,7 @@ fun MonitoreoTab(viewModel: AgroAlertViewModel) {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.Thermostat, contentDescription = null, tint = bannerColor, modifier = Modifier.size(18.dp))
+                            Icon(Icons.Default.Thermostat, contentDescription = null, tint = bannerColor, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(4.dp))
                             Text("Temperatura", style = MaterialTheme.typography.labelSmall, color = TextSecondary)
                         }
@@ -155,7 +162,7 @@ fun MonitoreoTab(viewModel: AgroAlertViewModel) {
                         Text(
                             text = "${telemetria.temperatura} °C",
                             fontWeight = FontWeight.Bold,
-                            fontSize = 28.sp,
+                            fontSize = 26.sp,
                             color = bannerColor
                         )
                         Text(
@@ -178,19 +185,19 @@ fun MonitoreoTab(viewModel: AgroAlertViewModel) {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.WaterDrop, contentDescription = null, tint = InacapBlue, modifier = Modifier.size(18.dp))
+                            Icon(Icons.Default.WaterDrop, contentDescription = null, tint = InacapBlue, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Humedad Relativa", style = MaterialTheme.typography.labelSmall, color = TextSecondary)
+                            Text("Humedad", style = MaterialTheme.typography.labelSmall, color = TextSecondary)
                         }
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
                             text = "${telemetria.humedad} %",
                             fontWeight = FontWeight.Bold,
-                            fontSize = 28.sp,
+                            fontSize = 26.sp,
                             color = InacapBlue
                         )
                         Text(
-                            text = "Sensor DHT11 One-Wire",
+                            text = "Sensor DHT11",
                             fontSize = 11.sp,
                             color = TextSecondary
                         )
@@ -211,25 +218,37 @@ fun MonitoreoTab(viewModel: AgroAlertViewModel) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(14.dp),
-                    horizontalArrangement = Arrangement.SpaceAround
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     ItemMetricaSecundaria("Punto de Rocío", "${telemetria.puntoRocio} °C", Icons.Default.Cloud)
-                    Divider(modifier = Modifier.height(36.dp).width(1.dp))
+                    Divider(modifier = Modifier.height(32.dp).width(1.dp), color = Color.LightGray.copy(alpha = 0.5f))
                     ItemMetricaSecundaria("Estado Bomba", if (telemetria.bombaFisicaActiva) "ON (Activo)" else "OFF (Reposo)", Icons.Default.Power)
-                    Divider(modifier = Modifier.height(36.dp).width(1.dp))
-                    ItemMetricaSecundaria("Modo Actual", telemetria.modoOperacion, Icons.Default.Settings)
+                    Divider(modifier = Modifier.height(32.dp).width(1.dp), color = Color.LightGray.copy(alpha = 0.5f))
+                    ItemMetricaSecundaria("Modo Lazo", telemetria.modoOperacion, Icons.Default.Settings)
                 }
             }
         }
 
         // 5. Historial de Eventos y Bitácora en Vivo
         item {
-            Text(
-                text = "Bitácora de Eventos de Campo (Auditoría OT)",
-                style = MaterialTheme.typography.titleLarge,
-                color = TextPrimary,
-                modifier = Modifier.padding(top = 8.dp)
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Bitácora de Eventos de Campo",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextPrimary
+                )
+                Text(
+                    text = "En tiempo real",
+                    fontSize = 11.sp,
+                    color = TextSecondary
+                )
+            }
         }
 
         items(historial.take(6)) { evento ->
@@ -242,12 +261,12 @@ fun MonitoreoTab(viewModel: AgroAlertViewModel) {
 fun ItemMetricaSecundaria(titulo: String, valor: String, icono: androidx.compose.ui.graphics.vector.ImageVector) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(icono, contentDescription = null, modifier = Modifier.size(14.dp), tint = TextSecondary)
+            Icon(icono, contentDescription = null, modifier = Modifier.size(13.dp), tint = TextSecondary)
             Spacer(modifier = Modifier.width(4.dp))
             Text(titulo, fontSize = 11.sp, color = TextSecondary)
         }
         Spacer(modifier = Modifier.height(2.dp))
-        Text(valor, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = TextPrimary)
+        Text(valor, fontWeight = FontWeight.Bold, fontSize = 13.sp, color = TextPrimary)
     }
 }
 
@@ -267,9 +286,9 @@ fun ItemEventoRow(evento: BitacoraRegistro) {
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 color = InacapBlue,
-                modifier = Modifier.width(60.dp)
+                modifier = Modifier.width(55.dp)
             )
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(6.dp))
             Text(
                 text = evento.mensaje,
                 fontSize = 12.sp,

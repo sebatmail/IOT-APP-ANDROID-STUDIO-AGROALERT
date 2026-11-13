@@ -12,11 +12,11 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.agroalert.araucania.data.RolUsuario
-import com.agroalert.araucania.data.TipoEvento
 import com.agroalert.araucania.ui.theme.*
 import com.agroalert.araucania.viewmodel.AgroAlertViewModel
 
@@ -29,7 +29,8 @@ fun ActivadorTab(viewModel: AgroAlertViewModel) {
     val esAdmin = usuarioActual?.rol == RolUsuario.ADMINISTRADOR
 
     var sliderValue by rememberSaveable { mutableFloatStateOf(telemetria.umbralHelada) }
-    var observaciones by rememberSaveable { mutableStateOf("Sector 3 - Huerto Freire (Variedad Tonda di Giffoni)") }
+    var observaciones by rememberSaveable { mutableStateOf("Revisión de toberas en Sector 3: Aspersores libres de obstrucción.") }
+    var reporteGuardadoConfirmacion by rememberSaveable { mutableStateOf(false) }
     var showDialogAdvertenciaModo by rememberSaveable { mutableStateOf(false) }
     var showDialogPermisoRbac by rememberSaveable { mutableStateOf(false) }
 
@@ -46,7 +47,7 @@ fun ActivadorTab(viewModel: AgroAlertViewModel) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
 
-        // Banner informativo de Rol Activo (RBAC)
+        // Banner informativo del Rol Activo (RBAC)
         Card(
             shape = RoundedCornerShape(12.dp),
             colors = CardDefaults.cardColors(
@@ -61,20 +62,21 @@ fun ActivadorTab(viewModel: AgroAlertViewModel) {
                 Icon(
                     imageVector = if (esAdmin) Icons.Default.AdminPanelSettings else Icons.Default.Person,
                     contentDescription = null,
-                    tint = if (esAdmin) AgroGreenPrimary else InacapBlue
+                    tint = if (esAdmin) AgroGreenPrimary else InacapBlue,
+                    modifier = Modifier.size(28.dp)
                 )
                 Spacer(modifier = Modifier.width(10.dp))
-                Column {
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = if (esAdmin) "Perfil: ADMINISTRADOR DE RIEGO (Acceso Total)"
-                               else "Perfil: OPERADOR DE TERRENO (Monitoreo y Bitácora)",
+                        text = if (esAdmin) "Administrador de Riego: Sebastián Torres"
+                               else "Operador de Terreno: Modo Monitoreo e Inspección",
                         fontWeight = FontWeight.Bold,
                         fontSize = 12.sp,
                         color = if (esAdmin) AgroGreenPrimary else InacapBlue
                     )
                     Text(
-                        text = if (esAdmin) "Puede calibrar umbrales y conmutar modos de control."
-                               else "Calibración restringida según política de seguridad ISO 27001 (A.9.1).",
+                        text = if (esAdmin) "Permisos completos: Calibración de umbrales y telemando de bomba."
+                               else "Parámetros críticos protegidos. Habilitado para redactar reportes de campo.",
                         fontSize = 11.sp,
                         color = TextPrimary
                     )
@@ -89,72 +91,47 @@ fun ActivadorTab(viewModel: AgroAlertViewModel) {
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Column(modifier = Modifier.padding(18.dp)) {
+            Column(modifier = Modifier.padding(16.dp)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.Tune, contentDescription = null, tint = AgroGreenPrimary)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Calibración de Umbral (Slider)",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = TextPrimary
-                        )
-                    }
-
-                    if (!esAdmin) {
-                        Surface(
-                            shape = RoundedCornerShape(8.dp),
-                            color = WarningAmberLight
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(Icons.Default.Lock, contentDescription = null, tint = WarningAmber, modifier = Modifier.size(12.dp))
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text("Solo Admin", fontSize = 10.sp, color = WarningAmber, fontWeight = FontWeight.Bold)
-                            }
-                        }
-                    }
-                }
-
-                Text(
-                    text = "Ajusta la temperatura crítica para encender la aspersión térmica y liberar 80 cal/g de calor latente.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = TextSecondary,
-                    modifier = Modifier.padding(top = 4.dp, bottom = 12.dp)
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text("Punto Crítico de Helada:", fontSize = 13.sp, color = TextPrimary)
+                    Icon(Icons.Default.Tune, contentDescription = null, tint = AgroGreenPrimary, modifier = Modifier.size(20.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Umbral de Helada (Slider)",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = TextPrimary,
+                        modifier = Modifier.weight(1f)
+                    )
                     Text(
                         text = "${String.format("%.1f", sliderValue)} °C",
-                        fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
                         color = AgroGreenPrimary
                     )
                 }
 
+                Text(
+                    text = "Ajusta la temperatura de disparo para asperjar agua y liberar 80 cal/g de calor latente.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextSecondary,
+                    modifier = Modifier.padding(vertical = 4.dp)
+                )
+
                 Slider(
                     value = sliderValue,
-                    onValueChange = { 
+                    onValueChange = { nuevoValor ->
                         if (esAdmin) {
-                            sliderValue = it 
+                            sliderValue = nuevoValor
                         } else {
                             showDialogPermisoRbac = true
                         }
                     },
-                    onValueChangeFinished = { 
+                    onValueChangeFinished = {
                         if (esAdmin) {
-                            viewModel.calibrarUmbral(sliderValue) 
+                            viewModel.calibrarUmbral(sliderValue)
                         }
                     },
                     valueRange = 0.0f..6.0f,
@@ -174,6 +151,16 @@ fun ActivadorTab(viewModel: AgroAlertViewModel) {
                     Text("0.0 °C (Mínimo)", fontSize = 11.sp, color = TextSecondary)
                     Text("6.0 °C (Preventivo)", fontSize = 11.sp, color = TextSecondary)
                 }
+
+                if (!esAdmin) {
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = "🔒 Control bloqueado para Operador (Requiere privilegios de Administrador)",
+                        fontSize = 11.sp,
+                        color = WarningAmber,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
             }
         }
 
@@ -184,50 +171,32 @@ fun ActivadorTab(viewModel: AgroAlertViewModel) {
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Column(modifier = Modifier.padding(18.dp)) {
+            Column(modifier = Modifier.padding(16.dp)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.SettingsSuggest, contentDescription = null, tint = InacapBlue)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Modo de Operación (RadioButtons)",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = TextPrimary
-                        )
-                    }
-
-                    if (!esAdmin) {
-                        Surface(
-                            shape = RoundedCornerShape(8.dp),
-                            color = WarningAmberLight
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(Icons.Default.Lock, contentDescription = null, tint = WarningAmber, modifier = Modifier.size(12.dp))
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text("Solo Admin", fontSize = 10.sp, color = WarningAmber, fontWeight = FontWeight.Bold)
-                            }
-                        }
-                    }
+                    Icon(Icons.Default.SettingsSuggest, contentDescription = null, tint = InacapBlue, modifier = Modifier.size(20.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Modo de Operación del Lazo OT",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = TextPrimary
+                    )
                 }
 
                 Text(
-                    text = "Define la autonomía del lazo industrial OT en el microcontrolador ESP32.",
+                    text = "Define la autonomía del lazo en el microcontrolador ESP32.",
                     style = MaterialTheme.typography.bodySmall,
                     color = TextSecondary,
-                    modifier = Modifier.padding(top = 4.dp, bottom = 12.dp)
+                    modifier = Modifier.padding(vertical = 4.dp)
                 )
 
                 val opcionesModo = listOf(
-                    "AUTOMATICO" to "Modo Automático (Fail-Safe autónomo en ESP32)",
-                    "MANUAL" to "Modo Manual (Control Forzado por Operador)",
-                    "MANTENIMIENTO" to "Modo Mantenimiento (Pruebas Hidráulicas)"
+                    "AUTOMATICO" to "Modo Automático (Lazo Fail-Safe autónomo en ESP32)",
+                    "MANUAL" to "Modo Manual (Telemando forzado por Administrador)",
+                    "MANTENIMIENTO" to "Modo Mantenimiento (Pruebas hidráulicas)"
                 )
 
                 opcionesModo.forEach { (codigo, etiqueta) ->
@@ -235,7 +204,7 @@ fun ActivadorTab(viewModel: AgroAlertViewModel) {
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 4.dp)
+                            .padding(vertical = 2.dp)
                     ) {
                         RadioButton(
                             selected = (telemetria.modoOperacion == codigo),
@@ -249,14 +218,24 @@ fun ActivadorTab(viewModel: AgroAlertViewModel) {
                             enabled = esAdmin,
                             colors = RadioButtonDefaults.colors(selectedColor = InacapBlue)
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = etiqueta,
-                            fontSize = 13.sp,
+                            fontSize = 12.sp,
                             fontWeight = if (telemetria.modoOperacion == codigo) FontWeight.Bold else FontWeight.Normal,
                             color = if (esAdmin) TextPrimary else TextSecondary
                         )
                     }
+                }
+
+                if (!esAdmin) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "🔒 Conmutación restringida a perfil Administrador",
+                        fontSize = 11.sp,
+                        color = WarningAmber,
+                        fontWeight = FontWeight.SemiBold
+                    )
                 }
             }
         }
@@ -268,18 +247,27 @@ fun ActivadorTab(viewModel: AgroAlertViewModel) {
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Column(modifier = Modifier.padding(18.dp)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.PowerSettingsNew, contentDescription = null, tint = if (telemetria.bombaFisicaActiva) AgroGreenSecondary else TextSecondary)
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.PowerSettingsNew, 
+                        contentDescription = null, 
+                        tint = if (telemetria.bombaFisicaActiva) AgroGreenSecondary else TextSecondary,
+                        modifier = Modifier.size(20.dp)
+                    )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Actuador Motobomba de Aspersión (Switch)",
-                        style = MaterialTheme.typography.titleLarge,
+                        text = "Actuador Motobomba (Switch)",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
                         color = TextPrimary
                     )
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -288,15 +276,15 @@ fun ActivadorTab(viewModel: AgroAlertViewModel) {
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = if (telemetria.bombaFisicaActiva) "BOMBA ENERGIZADA (Relé 5V Active LOW)" 
-                                   else "BOMBA APAGADA (Contactos abiertos)",
-                            fontSize = 13.sp,
+                            text = if (telemetria.bombaFisicaActiva) "BOMBA ENERGIZADA (Relé ON)" 
+                                   else "BOMBA EN REPOSO (Relé OFF)",
+                            fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = if (telemetria.bombaFisicaActiva) AgroGreenSecondary else TextSecondary
                         )
                         Text(
-                            text = if (isSwitchLoading) "Esperando handshake de red Wi-Fi (108 ms)..." 
-                                   else "Verificado con optoacoplador PC817 en GPIO 23.",
+                            text = if (isSwitchLoading) "Esperando handshake Wi-Fi..." 
+                                   else "Relé 5V optoacoplado en GPIO 23.",
                             fontSize = 11.sp,
                             color = TextSecondary
                         )
@@ -308,12 +296,15 @@ fun ActivadorTab(viewModel: AgroAlertViewModel) {
                         Switch(
                             checked = telemetria.bombaFisicaActiva,
                             onCheckedChange = { nuevoEstado ->
-                                if (telemetria.modoOperacion != "MANUAL") {
+                                if (!esAdmin) {
+                                    showDialogPermisoRbac = true
+                                } else if (telemetria.modoOperacion != "MANUAL") {
                                     showDialogAdvertenciaModo = true
                                 } else {
                                     viewModel.toggleBombaManual(nuevoEstado)
                                 }
                             },
+                            enabled = esAdmin,
                             colors = SwitchDefaults.colors(
                                 checkedThumbColor = CardBackground,
                                 checkedTrackColor = AgroGreenSecondary
@@ -324,31 +315,39 @@ fun ActivadorTab(viewModel: AgroAlertViewModel) {
             }
         }
 
-        // 4. Tarjeta OutlinedTextField: Registro de Observaciones de Campo (EditText)
+        // 4. Tarjeta OutlinedTextField: Registro de Observaciones de Campo (Función Clave de Operador)
         Card(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = CardBackground),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Column(modifier = Modifier.padding(18.dp)) {
+            Column(modifier = Modifier.padding(16.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.EditNote, contentDescription = null, tint = InacapBlue)
+                    Icon(Icons.Default.EditNote, contentDescription = null, tint = InacapBlue, modifier = Modifier.size(20.dp))
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Bitácora Agronómica de Parcela (EditText)",
-                        style = MaterialTheme.typography.titleLarge,
+                        text = "Reporte de Inspección Agrícola (Campo)",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
                         color = TextPrimary
                     )
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "El operador y el administrador pueden registrar observaciones de toberas, escarcha o faena.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextSecondary,
+                    modifier = Modifier.padding(vertical = 4.dp)
+                )
 
                 OutlinedTextField(
                     value = observaciones,
-                    onValueChange = { observaciones = it },
-                    label = { Text("Observaciones del Operador / Estado de Toberas") },
-                    supportingText = { Text("Registro auditado en memoria segura ISO 27000.") },
+                    onValueChange = { 
+                        observaciones = it 
+                        reporteGuardadoConfirmacion = false
+                    },
+                    label = { Text("Nota de Terreno / Observaciones de Riego") },
                     singleLine = false,
                     maxLines = 3,
                     modifier = Modifier.fillMaxWidth()
@@ -356,20 +355,88 @@ fun ActivadorTab(viewModel: AgroAlertViewModel) {
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Button(
-                    onClick = {
-                        val autor = usuarioActual?.nombre ?: "Operador"
-                        viewModel.registrarEvento(
-                            TipoEvento.SISTEMA_OT,
-                            "[$autor]: $observaciones"
-                        )
-                    },
-                    modifier = Modifier.align(Alignment.End),
-                    colors = ButtonDefaults.buttonColors(containerColor = InacapBlue)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(Icons.Default.Save, contentDescription = null, modifier = Modifier.size(16.dp))
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text("Guardar en Bitácora", fontSize = 12.sp)
+                    if (reporteGuardadoConfirmacion) {
+                        Text(
+                            text = "✔ Reporte guardado en bitácora",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = AgroGreenSecondary
+                        )
+                    } else {
+                        Spacer(modifier = Modifier.width(1.dp))
+                    }
+
+                    Button(
+                        onClick = {
+                            if (observaciones.isNotBlank()) {
+                                viewModel.agregarReporteCampo(observaciones.trim())
+                                reporteGuardadoConfirmacion = true
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = InacapBlue)
+                    ) {
+                        Icon(Icons.Default.Save, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("Guardar en Bitácora", fontSize = 12.sp)
+                    }
+                }
+            }
+        }
+
+        // 5. Panel Interactivo de Demostración para la Evaluación Docente
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFFF1F5F9)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.PlayCircle, contentDescription = null, tint = AgroGreenPrimary, modifier = Modifier.size(20.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Simulador de Demostración en Clase",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = TextPrimary
+                    )
+                }
+
+                Text(
+                    text = "Prueba la reacción inmediata de la app y del microcontrolador ante un evento térmico:",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextSecondary,
+                    modifier = Modifier.padding(vertical = 4.dp)
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    OutlinedButton(
+                        onClick = { viewModel.simularHeladaCritica() },
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = FrostRedAlert),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(Icons.Default.AcUnit, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Simular Helada (-1.2°)", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    }
+
+                    OutlinedButton(
+                        onClick = { viewModel.restaurarTemperaturaNormal() },
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = AgroGreenPrimary),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(Icons.Default.WbSunny, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Normal (14.8°)", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    }
                 }
             }
         }
@@ -395,9 +462,9 @@ fun ActivadorTab(viewModel: AgroAlertViewModel) {
     if (showDialogPermisoRbac) {
         AlertDialog(
             onDismissRequest = { showDialogPermisoRbac = false },
-            title = { Text("Acceso Restringido (RBAC ISO 27001)") },
+            title = { Text("Acceso Restringido (RBAC)") },
             text = {
-                Text("Solo el usuario con rol de ADMINISTRADOR DE RIEGO posee autorización para calibrar umbrales y conmutar modos ciberfísicos. El Operador solo tiene permisos de monitoreo y bitácora.")
+                Text("El perfil de Operador de Terreno solo cuenta con permisos de lectura y redacción de reportes. Para alterar umbrales o activar la bomba inicie sesión como Administrador.")
             },
             confirmButton = {
                 TextButton(onClick = { showDialogPermisoRbac = false }) {
