@@ -1,0 +1,18 @@
+# 📋 Historias de Usuario - AgroAlert Araucanía
+
+**Asignatura:** Aplicaciones Móviles para IoT (TI3042)  
+**Evaluación:** Evaluación Sumativa Unidad 2 (25%)  
+**Autores:** Sebastián Torres & Darío Candia  
+**Docente:** Franco Fossati Cordero (Cátedra IoT) & Luis Rojas Rubio (Taller Compose)  
+
+---
+
+## Matriz de Historias de Usuario (Metodología Ágil)
+
+| ID | Título de la Historia | Rol de Usuario | Requerimiento (Deseo y Beneficio) | Criterios de Aceptación (*Given-When-Then*) |
+| :--- | :--- | :--- | :--- | :--- |
+| **HU-01** | **Autenticación Segura y Control de Acceso RBAC** | Agricultor / Administrador | *Como* usuario del sistema, *quiero* iniciar sesión con mi correo y contraseña segura, *para* impedir accesos no autorizados al control de la motobomba de riego. | • **Dado** que el usuario ingresa sus credenciales, **cuando** presiona "Iniciar Sesión", **entonces** el sistema valida la política de contraseñas (8+ caracteres, mayúscula, minúscula, número y símbolo especial).<br>• **Dado** que se cometen 3 fallos consecutivos, **cuando** se intenta el cuarto ingreso, **entonces** la app bloquea el formulario por 60 segundos por seguridad.<br>• **Dado** que inicia sesión como "Operador", **cuando** entra a la app, **entonces** se le restringen los permisos de calibración según ISO 27001 (A.9.1). |
+| **HU-02** | **Supervisión Agroclimática Remota a Larga Distancia** | Productor en Vivienda Rural | *Como* agricultor descansando en mi casa (a más de 200 m del huerto), *quiero* supervisar la temperatura y humedad en tiempo real vía Wi-Fi, *para* enterarme de descensos térmicos nocturnos sin ir al campo. | • **Dado** que el ESP32 transmite datos cada 2 segundos, **cuando** la app está abierta, **entonces** las tarjetas de telemetría se actualizan en menos de 200 ms.<br>• **Dado** que la temperatura cae bajo el umbral fijado, **cuando** se detecta la condición crítica, **entonces** la pantalla tiñe el semáforo virtual en rojo vibrante (*"¡ALERTA CRÍTICA DE HELADA!"*). |
+| **HU-03** | **Calibración Dinámica de Umbral Térmico con Slider** | Administrador de Riego | *Como* encargado técnico de riego, *quiero* ajustar el umbral de activación de helada mediante un Slider continuo, *para* adecuar el disparo a la fenología exacta del avellano europeo. | • **Dado** que el usuario posee rol de Administrador, **cuando** desplaza el Slider entre 0.0 °C y 6.0 °C en pasos de 0.5 °C, **entonces** el valor se sincroniza en Firebase y en el microcontrolador ESP32.<br>• **Dado** que el usuario es un Operador regular, **cuando** intenta mover el Slider, **entonces** la app bloquea la acción y muestra un cuadro de diálogo informando la restricción de perfil. |
+| **HU-04** | **Conmutación de Modo de Operación con RadioButtons** | Administrador de Riego | *Como* supervisor agrícola, *quiero* alternar entre Modo Automático, Manual y Mantenimiento mediante RadioButtons, *para* evitar encendidos automáticos durante labores diurnas. | • **Dado** que el Administrador selecciona 'Modo Manual', **cuando** confirma la opción, **entonces** el ESP32 deshabilita el lazo térmico y espera únicamente órdenes del Switch manual. |
+| **HU-05** | **Telemando Directo de Motobomba con Switch** | Operador de Campo | *Como* operador en terreno, *quiero* conmutar un Switch en la app para encender o apagar la bomba de aspersión, *para* ejecutar pruebas de toberas o lavado de líneas. | • **Dado** que el sistema está en Modo Manual, **cuando** el operario activa el Switch a ON, **entonces** la app emite la orden y no cambia el estado visual a verde hasta recibir el handshake de confirmación del relé físico (Active LOW). |
