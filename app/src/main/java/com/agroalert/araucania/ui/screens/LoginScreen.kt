@@ -63,7 +63,7 @@ fun LoginScreen(
     val tieneMayuscula = password.any { it.isUpperCase() }
     val tieneMinuscula = password.any { it.isLowerCase() }
     val tieneNumero = password.any { it.isDigit() }
-    val tieneSimbolo = password.any { "@$!%*?&".contains(it) }
+    val tieneSimbolo = password.any { "@$!%*?&#._-+#".contains(it) || !it.isLetterOrDigit() }
     val claveCumplePolitica = tieneLongitud && tieneMayuscula && tieneMinuscula && tieneNumero && tieneSimbolo
 
     Column(
@@ -173,7 +173,7 @@ fun LoginScreen(
                         ItemReglaPassword("Al menos una mayúscula", tieneMayuscula)
                         ItemReglaPassword("Al menos una minúscula", tieneMinuscula)
                         ItemReglaPassword("Al menos un número", tieneNumero)
-                        ItemReglaPassword("Al menos un símbolo (@$!%*?&)", tieneSimbolo)
+                        ItemReglaPassword("Al menos un símbolo (@$!%*?&#)", tieneSimbolo)
                     }
                 }
 
@@ -310,3 +310,25 @@ fun LoginScreen(
         )
     }
 }
+
+@Composable
+private fun ItemReglaPassword(texto: String, cumplida: Boolean) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(vertical = 2.dp)
+    ) {
+        Icon(
+            imageVector = if (cumplida) Icons.Default.CheckCircle else Icons.Default.Cancel,
+            contentDescription = null,
+            tint = if (cumplida) AgroGreenPrimary else FrostRedAlert,
+            modifier = Modifier.size(14.dp)
+        )
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(
+            text = texto,
+            fontSize = 11.sp,
+            color = if (cumplida) TextPrimary else TextSecondary
+        )
+    }
+}
+
