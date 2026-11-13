@@ -7,12 +7,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.agroalert.araucania.ui.theme.AgroGreenPrimary
 import com.agroalert.araucania.ui.theme.CardBackground
-import com.agroalert.araucania.ui.theme.InacapBlue
 import com.agroalert.araucania.viewmodel.AgroAlertViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -22,14 +22,14 @@ fun MainDashboardScreen(
     onCerrarSesion: () -> Unit
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
-    var showDialogSeguridad by rememberSaveable { mutableStateOf(false) }
-
     val usuarioActual by viewModel.usuarioActual.collectAsState()
 
+    // 4 Pestañas exactas al mockup original del usuario
     val tabs = listOf(
-        Triple("Monitoreo", Icons.Default.Sensors, "Lecturas"),
-        Triple("Control Riego", Icons.Default.Tune, "Actuador"),
-        Triple("Dispositivos", Icons.Default.Devices, "Red IoT")
+        Pair("INICIO", Icons.Default.Home),
+        Pair("CLIMA", Icons.Default.Thermostat),
+        Pair("ALERTAS", Icons.Default.Notifications),
+        Pair("CONFIGURACIÓN", Icons.Default.Settings)
     )
 
     Scaffold(
@@ -53,16 +53,6 @@ fun MainDashboardScreen(
                     }
                 },
                 actions = {
-                    // Botón de Información de Ciberseguridad ISO para la evaluación docente
-                    IconButton(onClick = { showDialogSeguridad = true }) {
-                        Icon(
-                            imageVector = Icons.Default.Shield,
-                            contentDescription = "Auditoría de Seguridad ISO",
-                            tint = CardBackground
-                        )
-                    }
-
-                    // Botón de Cerrar Sesión
                     IconButton(onClick = onCerrarSesion) {
                         Icon(
                             imageVector = Icons.Default.Logout,
@@ -82,15 +72,24 @@ fun MainDashboardScreen(
             NavigationBar(
                 containerColor = CardBackground
             ) {
-                tabs.forEachIndexed { index, (titulo, icono, _) ->
+                tabs.forEachIndexed { index, (titulo, icono) ->
                     NavigationBarItem(
                         selected = (selectedTab == index),
                         onClick = { selectedTab = index },
                         icon = { Icon(icono, contentDescription = titulo) },
-                        label = { Text(titulo, fontSize = 11.sp, fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal) },
+                        label = {
+                            Text(
+                                text = titulo,
+                                fontSize = 10.sp,
+                                fontWeight = if (selectedTab == index) FontWeight.ExtraBold else FontWeight.Normal,
+                                color = if (selectedTab == index) AgroGreenPrimary else Color(0xFF6B7280)
+                            )
+                        },
                         colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = InacapBlue,
-                            selectedTextColor = InacapBlue,
+                            selectedIconColor = AgroGreenPrimary,
+                            selectedTextColor = AgroGreenPrimary,
+                            unselectedIconColor = Color(0xFF6B7280),
+                            unselectedTextColor = Color(0xFF6B7280),
                             indicatorColor = AgroGreenPrimary.copy(alpha = 0.15f)
                         )
                     )
@@ -100,36 +99,11 @@ fun MainDashboardScreen(
     ) { innerPadding ->
         Surface(modifier = Modifier.padding(innerPadding)) {
             when (selectedTab) {
-                0 -> MonitoreoTab(viewModel = viewModel)
-                1 -> ActivadorTab(viewModel = viewModel)
-                2 -> MultiDispositivoTab(viewModel = viewModel)
+                0 -> InicioTab(viewModel = viewModel)
+                1 -> ClimaTab(viewModel = viewModel)
+                2 -> AlertasTab(viewModel = viewModel)
+                3 -> ConfiguracionTab(viewModel = viewModel, onCerrarSesion = onCerrarSesion)
             }
         }
-    }
-
-    // Modal de Ciberseguridad ISO 27000 / ISO 27400
-    if (showDialogSeguridad) {
-        AlertDialog(
-            onDismissRequest = { showDialogSeguridad = false },
-            title = {
-                Text("Ciberseguridad IoT (ISO 27000 / ISO 27400)", fontWeight = FontWeight.Bold, fontSize = 15.sp)
-            },
-            text = {
-                androidx.compose.foundation.layout.Column(
-                    verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)
-                ) {
-                    Text("• Cifrado en Reposo: EncryptedSharedPreferences (AES-256 GCM en Android Keystore).", fontSize = 12.sp)
-                    Text("• Control de Acceso RBAC: Segregación estricta entre Administrador y Operador de Terreno.", fontSize = 12.sp)
-                    Text("• Protección de Claves: Regex robusta y penalización de 60 s ante 3 intentos fallidos.", fontSize = 12.sp)
-                    Text("• Enlace Wi-Fi: Tráfico forzado TLS 1.3 con usesCleartextTraffic='false'.", fontSize = 12.sp)
-                    Text("• Lazo Industrial OT: Fail-Safe autónomo en ESP32 independiente de la app móvil.", fontSize = 12.sp)
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showDialogSeguridad = false }) {
-                    Text("ENTENDIDO")
-                }
-            }
-        )
     }
 }
