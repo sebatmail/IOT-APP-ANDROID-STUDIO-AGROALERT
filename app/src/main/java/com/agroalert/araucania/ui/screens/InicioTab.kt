@@ -41,8 +41,16 @@ fun InicioTab(viewModel: AgroAlertViewModel) {
     val esAdmin = usuarioActual?.rol == RolUsuario.ADMINISTRADOR
     var showDialogRestringido by remember { mutableStateOf(false) }
 
-    val horaActual = remember {
-        SimpleDateFormat("HH:mm a", Locale.getDefault()).format(Date())
+    var horaActual by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        val sdf = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).apply {
+            timeZone = TimeZone.getTimeZone("America/Santiago")
+        }
+        while (true) {
+            horaActual = sdf.format(Date())
+            kotlinx.coroutines.delay(1000L)
+        }
     }
 
     Column(

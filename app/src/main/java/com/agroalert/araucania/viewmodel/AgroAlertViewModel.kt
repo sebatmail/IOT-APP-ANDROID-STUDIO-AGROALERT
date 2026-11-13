@@ -210,7 +210,9 @@ class AgroAlertViewModel : ViewModel() {
     }
 
     fun registrarEvento(tipo: TipoEvento, mensaje: String) {
-        val horaActual = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
+        val horaActual = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).apply {
+            timeZone = TimeZone.getTimeZone("America/Santiago")
+        }.format(Date())
         val nuevoEvento = BitacoraRegistro(hora = horaActual, tipo = tipo, mensaje = mensaje)
         _historialEventos.update { listOf(nuevoEvento) + it.take(24) }
     }
