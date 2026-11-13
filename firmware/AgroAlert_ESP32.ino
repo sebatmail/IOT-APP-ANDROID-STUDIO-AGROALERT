@@ -1,6 +1,6 @@
 // ============================================================================
 // PROYECTO: AgroAlert Araucanía - Firmware Oficial del Nodo IoT (ESP32)
-// INTEGRANTES: Sebastián Torres & Darío Candia | ASIGNATURA: TI3042 INACAP
+// AUTOR: Sebastián Torres | ASIGNATURA: TI3042 INACAP | DOCENTE: Franco Fossati Cordero
 // HARDWARE: ESP32-WROOM-32 DevKit V1 (Retirado en pañol con Joseph Cueto)
 // SENSORES/ACTUADORES: DHT11 (GPIO4), Relé 5V Active LOW (GPIO23), LEDs (18,19,21)
 // CONECTIVIDAD: Wi-Fi 802.11 b/g/n + Google Firebase Realtime Database

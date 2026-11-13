@@ -48,16 +48,16 @@ class AgroAlertViewModel : ViewModel() {
             DispositivoConectado(
                 id = "DEV-01",
                 nombreUsuario = "Sebastián Torres",
-                rol = "Operador de Terreno",
+                rol = "Administrador AgroAlert (Casa Patronal)",
                 modeloDispositivo = "Samsung Galaxy A52 (Android 13)",
                 ipLocal = "192.168.1.104",
                 latenciaMs = 95L
             ),
             DispositivoConectado(
                 id = "DEV-02",
-                nombreUsuario = "Darío Candia",
-                rol = "Supervisor de Riego (Casa Patronal)",
-                modeloDispositivo = "Xiaomi Redmi Note 10 (Android 12)",
+                nombreUsuario = "Operador de Terreno (Agrónomo)",
+                rol = "Operador Huerto Lautaro",
+                modeloDispositivo = "Motorola Moto G84 (Android 14)",
                 ipLocal = "192.168.1.118",
                 latenciaMs = 115L
             )

@@ -220,14 +220,14 @@ fun LoginScreen(
                         // Verificación de credenciales y asignación de rol (RBAC)
                         val u = usuario.trim().lowercase()
                         if (u == "admin@agroalert.cl" && password == "Admin#Araucania2026") {
-                            secureStorage.guardarSesion(u, "Darío Candia", RolUsuario.ADMINISTRADOR)
+                            secureStorage.guardarSesion(u, "Sebastián Torres (Admin)", RolUsuario.ADMINISTRADOR)
                             val sesion = secureStorage.obtenerUsuario()!!
                             viewModel.setUsuario(sesion)
                             intentosFallidos = 0
                             isLoading = false
                             onLoginSuccess()
                         } else if (u == "operador@agroalert.cl" && (password == "Agro#Araucania2026" || password == "Operador#Araucania2026")) {
-                            secureStorage.guardarSesion(u, "Sebastián Torres", RolUsuario.OPERADOR)
+                            secureStorage.guardarSesion(u, "Operador de Terreno", RolUsuario.OPERADOR)
                             val sesion = secureStorage.obtenerUsuario()!!
                             viewModel.setUsuario(sesion)
                             intentosFallidos = 0

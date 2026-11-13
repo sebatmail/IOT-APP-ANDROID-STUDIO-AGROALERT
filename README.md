@@ -286,12 +286,8 @@ AgroAlert/
 * **Carrera:** Técnico en Programación
 * **Asignatura:** Aplicaciones Móviles para IoT (Código: TI3042)
 * **Evaluación:** Evaluación Sumativa Unidad 2 (Ponderación: 25%)
-* **Autores:** 
-  * Sebastián Torres
-  * Darío Candia
-* **Docentes Guía:**
-  * **Franco Fossati Cordero** (Docente de Cátedra IoT)
-  * **Luis Rojas Rubio** (Docente de Taller Jetpack Compose)
+* **Autor:** Sebastián Torres
+* **Docente:** Franco Fossati Cordero
 
 ---
 

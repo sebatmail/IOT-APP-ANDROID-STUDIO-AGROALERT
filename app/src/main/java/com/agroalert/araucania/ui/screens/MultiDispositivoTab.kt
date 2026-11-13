@@ -92,7 +92,7 @@ fun MultiDispositivoTab(viewModel: AgroAlertViewModel) {
                     }
 
                     Text(
-                        text = "Al presionar el botón inferior se simula un cambio de umbral enviado desde el Terminal de la Casa Patronal (Darío Candia) hacia el nodo ESP32 y reflejado en el teléfono del Operador (Sebastián Torres).",
+                        text = "Al presionar el botón inferior se simula un cambio de umbral enviado desde el Terminal de la Casa Patronal (Sebastián Torres - Admin) hacia el nodo ESP32 y reflejado en el teléfono del Operador en huerto.",
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary,
                         modifier = Modifier.padding(vertical = 8.dp)
@@ -103,7 +103,7 @@ fun MultiDispositivoTab(viewModel: AgroAlertViewModel) {
                             viewModel.calibrarUmbral(2.0f)
                             viewModel.registrarEvento(
                                 TipoEvento.CAMBIO_MODO,
-                                "Sincronización multi-cliente: Terminal B (Darío Candia) actualizó umbral a 2.0 °C en 112 ms."
+                                "Sincronización multi-cliente: Terminal Administrador (Sebastián Torres) actualizó umbral a 2.0 °C en 112 ms."
                             )
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = AgroGreenPrimary),

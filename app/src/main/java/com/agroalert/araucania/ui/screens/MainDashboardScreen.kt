@@ -42,8 +42,8 @@ fun MainDashboardScreen(
                             fontSize = 16.sp
                         )
                         val rolTexto = if (usuarioActual?.rol == com.agroalert.araucania.data.RolUsuario.ADMINISTRADOR) 
-                            "🔑 Admin: ${usuarioActual?.nombre ?: "Darío Candia"}" 
-                            else "👤 Operador: ${usuarioActual?.nombre ?: "Sebastián Torres"}"
+                            "🔑 Admin: ${usuarioActual?.nombre ?: "Sebastián Torres (Admin)"}" 
+                            else "👤 Operador: ${usuarioActual?.nombre ?: "Operador de Terreno"}"
                         Text(
                             text = rolTexto,
                             fontSize = 11.sp,

@@ -2,8 +2,8 @@
 
 **Asignatura:** Aplicaciones Móviles para IoT (TI3042)  
 **Evaluación:** Evaluación Sumativa Unidad 2 (25%)  
-**Autores:** Sebastián Torres & Darío Candia  
-**Docente:** Franco Fossati Cordero (Cátedra IoT) & Luis Rojas Rubio (Taller Compose)  
+**Autor:** Sebastián Torres  
+**Docente:** Franco Fossati Cordero  
 
 ---
 
